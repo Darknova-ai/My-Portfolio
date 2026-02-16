@@ -1,541 +1,890 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
-    <title>Light Kelechi (DARKNOVA) | Portfolio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https;//fonts.googleapis.com/css2?family=
-        poppins;wght@300;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <meta property="og:title" content="Chat AI - Your Smart Assistant">
+    <meta property="og:description" content="An advanced AI chatbot that generates
+    text, images, audio and more.">
+    <meta property="og:image" content="https://yourdomain.com/preview.png">
+    <meta property="og:url" content="https://yourdomain.com">
+    <meta property="og:type" content="website">
+    <title>Chat AI</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <script src="https://js.paystack.co/v1/inline.js"></script>
 
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            background: #0f172a;
             color: white;
-            scroll-behavior: smooth;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
         }
         
-        #particles {
+        #intro {
             position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            background: #0f172a;
+            background: linear-gradient(45deg, #0f172a, #1e293b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: fadeOut 1s ease forwards;
+            animation-delay: 5s;
+            z-index: 1000;
         }
         
-        nav {
+        #intro h1 {
+            font-size: 40px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        
+        #loginScreen {
+            display: none;
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
-            padding: 20px 50px;
-            position: fixed;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        #featureMenu {
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            background: #111;
+            padding: 10px;
+            border-radius: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            width: 200px;
+        }
+        
+        .feature-btn {
+            display: block;
             width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
+            margin: 5px 0;
+            padding: 8px;
+            background: #222;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
         
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 20px;
+        .feature-btn:hover {
+            background: #333;
         }
         
-        nav a {
-            text-decoration: none;
+        .hidden {
+            display: none;
+        }
+        
+        input {
+            padding: 10px;
+            width: 250px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #2563eb;
             color: white;
         }
         
-        nav a:hover {
-            color: #00f5ff;
+        button:hover {
+            background: #1d4ed8;
         }
         
-        #hero {
+        #home {
+            display: none;
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 150px 80px;
+            flex-direction: column;
         }
         
-        .hero-text h1 {
-            font-size: 50px;
+        #sidebar {
+            width: 220px;
+            background: #202123;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         
-        .btn {
-            background: #00f5ff;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
+        #chatList {
+            flex: 1;
+            overflow: auto;
+        }
+        
+        #chatItem {
+            padding: 8px;
+            background: #343541;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        
+        #mainChat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #chatBox {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .lightMode {
+            background: white;
             color: black;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+        
+        .user {
+            background: #2563eb;
+            align-self: flex-end;
+        }
+        
+        .bot {
+            background: #334155;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+        }
+        
+        #chatInputArea {
+            display: flex;
+            padding: 10px;
+            background: #1e293b;
+        }
+        
+        #chatInput {
+            flex: 1;
             margin-right: 10px;
         }
         
-        .btn.secondary {
-            background: transparent;
-            border: 1px solid #00f5ff;
-            color: #00f5ff;
+        #plusBtn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            background: #22c55e;
         }
         
-        setion {
-            padding: 80px;
-        }
-        
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-        }
-        
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-        }
-        
-        .project-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-        }
-        
-        .project-card img {
-            width: 100%;
+        #features {
+            position: fixed;
+            bottom: 140px;
+            right: 20px;
+            width: 200px;
+            max-width: 300px;
+            overflow: auto;
+            background: #1e293b;
+            padding: 10px;
             border-radius: 10px;
-            margin-bottom: 15px;
+            display: none;
+        }
+        
+        @media (max-width:600px) {
+            .chat-container {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <nav>
-        <h2 class="logo">&lt;/&gt; Light</h2>
-        <ul>
-            <li><a href="#hero">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="skills">Skills</a></li>
-            <li><a href-="projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
 
-    <canvas id="particles"></canvas>
-
-    <section id="hero">
-        <div class="hero-text">
-            <h1>Light Kelechi (DARKNOVA)</h1>
-            <h2 class="typing"></h2>
-            <h3>Frontend & App Developer</h3>
-            <p>I build modern powered web applications that solve real-world problems.
+    <div id="intro">
+        <h1>CHAT AI</h1>
+        <p>Loading Smart Experience...</p>
+    </div>
 
 
-            </p>
+
+    <div id="loginScreen">
+        <h2>Secure Acess</h2>
+        <input type="password" id="passInput" placeholder="Enter Passcode">
+        <button onclick="handleLogin()">Unlock</button>
+        <button onclick="fakeFingerprint()">Use Fingerprint</button>
+
+        <button onclick="fakeFaceID()">Use FaceID</button>
+        <button onclick="biometricLogin()">Biometric Login</button>
+
+        <p id="loginMsg"></p>
+    </div>
+
+    <div id="chatBox"></div>
+
+    <input type="type" id="userInput" placeholder="Ask me something...">
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="stopVoice()">Stop</button>
+
+    <input type="text" id="usernameInput" placeholder="Username">
+    <input type="password" id="passInput" placeholder="passcode">
+    <input type="file" accept="image/*,video/*,audio/*">
+
+    <div id="home">
+
+        <div id="sidebar">
+            <button onclick="upgradePlan()">Upgrade to Pro</button>
+            <button onclick="payWithPaystack()">Upgrade to pro (₦5,000)</button>
+            <button onclick="alert(summarizeChat())">Summarize</button>
+            <button onclick="createNewChat()">+ New Chat</button>
+            <div id="chatList"></div>
+            <button onclick="toggleMode()">Toggle Mode</button>
+            <button onclick="logout()">Logout</button>
+        </div>
 
 
-            <div class="buttons">
+        <div id="mainChat">
+            <div id="chatBox"></div>
 
-                <a href="#projects" class="btn">View Projects</a>
-                <a href="#contacts" class="btn secondary">Contact</a>
+            <div id="chatInputArea">
+                <input type="text" id="chatInput" placeholder="Type message...">
+                <button onclick="sendMessage()">Send</button>
             </div>
         </div>
 
-        <div class="hero-image">
-            <img src="images/hero-mockup.png" alt="AI App Screenshot">
-        </div>
-    </section>
+    </div>
+    <div id="chatBox"></div>
 
-    <section id="about">
-        <h2>About Me</h2>
-        <p>
-            I am a self-taught developer focused on building Apps ( AI tools, smart chatbots, and interactive web applications etc. ) My goal is to create powerful tech products.
-        </p>
-    </section>
+    <div id="chatInputArea">
+        <input type="text" id="chatInput" placeholder="Type Message...">
+        <button onclick="sendMessages()">Send</button>
+    </div>
 
-    <section id="skills">
-        <h2>Skills</h2>
-        <div class="skills-grid">
-            <div class="card">HTML</div>
-            <div class="card">CSS</div>
-            <div class="card">JavaScript</div>
-            <div class="card">Git</div>
-            <div class="card">API</div>
-            <div class="card">JSON</div>
-            <div class="card">UI Design</div>
-        </div>
-    </section>
+    <button type="button" id="plusBtn" onclick="constFeatures()">+</button>
+    <button id="plusBtn">+</button>
 
+    <div id="menu" style="display: none;">
+        <p>Upload Image</p>
+        <p>Upload File</p>
+    </div>
 
+    <div id="featureMenu" class="hidden"></div>
 
-    <section id="Projects">
-        <h2>Projects</h2>
-        <div id="projects"></div>
+    </div>
 
-        <div class="Project-grid">
-
-            <div class="Project-card" data-category="ai">
-                <img src="images/Project1.png">
-                <h3>AI Chat App</h3>
-                <p>Smart chatbot with image generation and code writing.
-                </p>
-                <div class="buttons">
-                    <a href="#" class="btn">Live Demo</a>
-                    <a href="#" class="btn secondary">GitHub</a>
-                </div>
-            </div>
-
-            <input type="text" id="title" placeholder="Project Title">
-            <input type="text" id="desc" placeholder="Description">
-            <button onclick="addProject()">Add Project</button>
-
-            <div class="filters">
-                <button onclick="filterProjects('all')">All</button>
-                <button onclick="filterProjects('ai')">AI</button>
-                <button onclick="filterProjects('web')">Web</button>
-            </div>
-
-            <div class="Project-card">
-                <img src="images/Project2.png">
-                <h3>Task Manager</h3>
-                <p>Responsive Productivity app with drag-and-drop features.</p>
-                <div class="buttons">
-                    <a href="#" class="btn">Live Demo</a>
-                    <a href="#" class="btn secondary">GitHub</a>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <section id="contact">
-        <h2>Contact Me</h2>
-        <p>Email: K14007274@gmail.com</p>
-        <p>+2348160130034, +2349112113089</p>
-    </section>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const canvas =
-                document.getElementById("particles");
-            const ctx = canvas.getContext("2d");
+        const features = [
+            "AI Chat",
+            "Image Generator",
+            "Video Analyzer",
+            "Voice Assistant",
+            "Text To Speech",
+            "Speech To Text",
+            "Code Debugger",
+            "Math Solver",
+            "Essay Writer",
+            "Resume Builder",
+            "Buisness Plan Generator",
+            "Crypto Analyzer",
+            "Stock Predictor",
+            "Language Translator",
+            "PDF Summarizer",
+            "Youtube Script Writer",
+            "Tiktok Script Creator",
+            "Instagram Caption Generator",
+            "Logo Creator",
+            "UI Designer",
+            "App Wireframe Generator",
+            "3D Concept Maker",
+            "Hologram Concept Maker",
+            "Startup Idea Generator",
+            "Marketing Strategy AI",
+            "AI Tutor",
+            "Homework Helper",
+            "Relationship Advice AI",
+            "Fitness Planner",
+            "Meal Planner",
+            "Mental Health Support",
+            "News Analyzer",
+            "Fact Checker",
+            "AI Research Assistant",
+            "Legal Document Draft",
+            "Contract Generator",
+            "Music lyric Generator",
+            "Beat Idea Generator",
+            "Voice Cloner"
 
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            let particleArray = [];
-
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 3 + 1;
-                    this.speedX = Math.random() * 1 - 0.5;
-                    this.speedY = Mth.random() * 1 - 0.5;
-                }
-
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-
-                }
-
-                draw() {
-                    ctx.fillstyle = "#38bdf8";
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            function initParticles() {
-                for (let i = 0; i < 100; i++) {
-                    particleArray.push(new Particle());
-                }
-            }
-
-            function animateParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particleArray.forEach(p => {
-                    p.update();
-                    P.draw();
-                });
-
-                requestAnimationFrame(animateParticles);
-            }
-
-            initParticles();
-            animateParticles();
-        });
-
-        const navLinks =
-            document.querySelectorAll("nav a");
-
-        navLinks.forEach(link => {
-            link.addEventListener("click", function(e) {
-                e.preventDefault();
-                const targetId =
-                    this.getAttribute("href").substring(1);
-                const targetSection =
-                    document.getElementById(targetId);
-
-                window.scrollTo({
-                    top: targetSection.offsetTop - 60,
-                    behavior: "smooth"
-                });
-            });
-        });
-
-        const sections =
-            document.querySelectorAll("section");
-
-        window.addEventListener("scroll", () => {
-            const sectionTop =
-                section.offsetTop - 100;
-            if (pageYOffset >= sectionTop) {
-                current =
-                    section.getAttribute("id");
-            }
-
-
-        });
-
-        fetch("https://api.github.com/users/darknova-ai/repos")
-            .then(res => res.json())
-            .then(data => {
-                const ProjectContainer =
-                    document.getElementById("projects");
-                ProjectContainer.innerHTML = "";
-
-                data.slice(0, 6).forEach(repo => {
-                    const ProjectCard =
-                        `<div class="project-card reveal">
-                    <h3>${repo.name}</h3>
-                    <p>${repo.description || "No description available."}</p>
-                    <a href="${repo.html_url}" target="_blank">View Code</a>
-                    </div>`;
-                    ProjectContainer.innerHTML += ProjectCard;
-                });
-            });
-
-        navLinks.forEach(link => {
-
-            link.classList.remove("active");
-
-            (link.getAttribute("href").includes(current))
-            link.classList.add("active");
-        });
-
-
-        const typingElement =
-            document.querySelector(".typing");
-        const textArray = [
-            "Frontend Developer",
-            "AI App Developer",
-            "Creative Coder",
-            "Problem Solver"
         ];
 
-        let textIndex = 0;
-        let charIndex = 0;
+        const plusBtn =
+            document.getElementById("plusBtn");
+        const featureMenu =
+            document.getElementById("featureMenu");
 
-        function typeEffect() {
-            if (charIndex <
-                textArray[textIndex].length
-            ) {
-                typingElement.textContent +=
-                    textArray[textIndex].charAt(charIndex);
-                charIndex++;
-                setTimeout(typeEffect, 100);
+        plusBtn.addEventListener("click", () => {
+            featureMenu.classList.toggle("hidden");
+            displayFeatures();
 
-            } else {
-                setTimeout(eraseEffect, 1500);
-            }
-        }
+            document.getElementById("menu");
 
-        function eraseEffect() {
-            if (charIndex > 0) {
-                typingElement.textContent =
+            plusBtn.addEventListener("click",
+                function() {
+                    if (menu.style.display === "none") {
+                        menu.style.display = "block";
 
-                    textArray[textIndex].substring(o, charIndex - 1);
-                charIndex--;
-                setTimeout(eraseEffect, 50);
-            } else {
-                textIndex++;
-                if (textIndex >=
-                    textArray.length
-                ) textIndex = 0;
-                setTimeout(typeEffect, 300);
-            }
-        }
-
-        if (typingElement) {
-            typeEffect();
-        }
-
-        const revealElements =
-            document.querySelectorAll(".reveal");
-
-        function revealOnScroll() {
-            revealElements.forEach(el => {
-                const windowHeight = window.innerHeight;
-                const elementTop = el.getBoundingClientRect().top;
-                const revealPoint = 100;
-
-                if (elementTop <
-                    windowHeight - revealPoint
-                ) {
-                    el.classList.add("active");
+                    } else {
+                        menu.style.display = "none";
+                    }
                 }
-            });
-        }
-
-        window.addEventListener("scroll", revealOnScroll);
-
-        const form =
-            document.querySelector("#contactForm");
-
-        if (form) {
-            form.addEventListener("submit", function(e) {
-                e.preventDefault();
-
-                const name =
-                    document.querySelector("#name").value.trim();
-                const email =
-                    document.querySelector("#email").value.trim();
-                const message =
-                    document.querySelector("#message").value.trim();
-
-                if (name === "" || email === "" || message === "") {
-                    alert("Please fill all fields.");
-                    return;
-
-                }
-
-                if (!email.includes("@")) {
-                    alert("Enter a valid email.");
-                    return;
-                }
-
-                alert("Message sent successfully!");
-                form.reset();
-            });
-        }
-
-        const toggleBtn =
-            document.querySelector("#themeToggle"); <
-
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener("click", () => {
-
-                document.body.classList.contains("light-mode");
-                if (document.body.classList("light-mode")) {
-
-                    localStorage.setItem("theme", "light");
-
-                } else {
-                    localStorage.se("theme", "dark");
-                }
-            });
-
-            if (localStorage.getItem("theme") === "light") {
-
-                document.body.classList.add("light-mode");
-            }
-        }
-
-        const backToTop =
-            document.querySelector("#backToTop");
-
-
-        window.addEventListener("scroll", () => {
-            if (window.scrollY > 500) {
-                backToTop.style.display = "block";
-            } else {
-                backToTop.style.display = "none";
-            }
+            )
         });
 
-        if (backToTop) {
 
-            backToTop.addEventListener("click", () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
+        if (message.includes("hello", "hi")) {
+            reply = "Hi there!";
+        }
+
+        function addMessage(text, type, save = true) {
+            let div =
+                document.createElement("div");
+            div.className = "message " + type;
+            div.innerText = text;
+
+            document.getElementById("chatBox").appendChild(div);
+            if (save) {
+                chats[currentUser]
+                    [currentChatId].push({
+                        text: type
+                    });
+            }
+        }
+
+        if (message.includes("hello", "hi")) {
+            reply = "Hi there!";
+        }
+
+        if (fingerprint === true) {
+            openApp();
+        }
+
+        if (faceID === true) {
+            openApp();
+        }
+
+        const knowledgeBase = [{
+            keywords: ["html", "what is html"],
+            answer: "HTML stands for HyperText Markup Language. It is used to structure web pages."
+
+        }, {
+            keywords: ["css", "what is css"],
+            answer: "CSS stands for Cascading Style Sheets. It styles and designs web pages."
+
+        }, {
+            keywords: ["javascript", "js"],
+            answer: "JavaScript makes websites interactive and dynamic."
+        }, {
+            keywords: ["ai"],
+            answer: "Artificial Intelligence allows machines to simulates human thinking."
+        }];
+
+        function getResponse(userMessage) {
+            userMessage =
+                userMessage.toLowerCase();
+
+            for (let item of knowledgeBase) {
+                for (let keyword of item.keywords) {
+                    if (userMessage.includes(keyword)) {
+                        return item.answer;
+                    }
+                }
+            }
+            return "I'm still learning. Can you ask in another way?";
+        }
+
+
+
+        const input =
+            document.getElementById("userInput");
+        const chatBox =
+            document.getElementById("chatBox");
+
+        function sendMessage() {
+            const userText = input.value;
+            const reply = getResponse(userText);
+
+            chatBox.innerHTML +=
+                `<p><strong>You:</strong> ${userText}</p>`;
+            chatBox.innerHTML += `<p><strong>AI:<?strong> ${reply}</P>`;
+
+            input.value = "";
+
+        }
+
+        function sendMessage() {
+            const userText = input.value;
+            const reply = getResponse(userText);
+
+            chatBox.innerHTML +=
+                `<P><strong>You:</strong> ${userText}</p>`;
+
+            setTimeout(() => {
+                chatBox.innerHTML +=
+                    `<p><strong>AI:</strong> ${reply}</p>`;
+
+            }, 800);
+
+            input.value = "";
+        }
+
+        if (!isNaN(eval(userMessage))) {
+            return "The answer is" + eval(userMessage);
+        }
+
+        function displayFeatures() {
+            featureMenu.innerHTML = "";
+
+            features.forEach(feature => {
+                const button =
+                    document.createElement("button");
+                button.textContent = feature;
+                button.className = "feature-btn";
+
+                button.onclick = () => {
+                    alert(feature + "selected");
+
+                };
+
+                featureMenu.appendChild(button);
+            });
+        }
+
+        let currentUser = null;
+        let chats = JSON.parse(localStorage.getItem("allChats")) || {};
+        let currentChatId = null;
+
+        let chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+
+        setTimeout(() => {
+            document.getElementById("loginScreen").style.display = "flex";
+        }, 5000);
+
+        function handleLogin() {
+            let username = document.getElementById("usernameInput").value;
+            let input = document.getElementById("passInput").value;
+            let savedPass = localStorage.getItem("chatAipPass");
+
+            if (!username || !pass) return;
+
+            let users = JSON.parse(localStorage.getItem("users")) || {};
+
+            if (!users[username]) {
+                users[username] = pass;
+                localStorage.setItem("users", JSON.stringify(users));
+            }
+
+            if (users[username] === pass) {
+                currentUser = username;
+                enterHome();
+            } else {
+                alert("Wrong password");
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById("home").style.display = "none";
+            document.getElementById("loginScreen").style, display = "flex";
+        }
+
+        async function biometricLogin() {
+            if (window.PublicKeyCredential) {
+                alert("Biometric Supported (Simulation Mode)");
+                enterHome();
+            } else {
+                alert("Biometric not supported")
+
+            }
+        }
+
+        {
+            role: "user",
+            content;
+            [{
+                type: "text",
+                text: "Explain this image"
+            }, {
+                type: "image_url",
+                image_url: {
+                    url: "data:image/jpeg;base64,..."
+                }
+            }]
+        }
+
+        model: "gpt-4o-mini-tts"
+        new Audio("audio_url.mp3").play();
+
+
+
+        if (!savedPass) {
+            localStorage.setItem("chatAiPass", input);
+            localStorage.clear();
+            document.getElementById("loginMsg").innerText = "Passcode set!";
+            enterHome();
+        } else {
+            if (input === savedPass) {
+                enterHome();
+            } else {
+                document.getElementById("loginMsg").innerText = "Wrong Passcode!";
+            }
+        }
+
+        function toogleMode() {
+            document.body.classList.toogle("lightMode");
+        }
+
+
+        function createNewChat() {
+            let id = "chat_" + Date.now();
+            if (!chats[currentUser])
+                chats[currentUser] = {};
+            chats[currentUser][id] = [];
+            currentChatId = id;
+            localStorage.setItem("allChats", JSON.stringify(chats));
+            renderChatList();
+            loadMessages();
+        }
+
+        function renderChatList() {
+            let list = document.getElementById("chatList");
+            list.innerHTML = "";
+            if (!chats[currentUser]) return;
+            object.keys(chats[currentUser]).forEach(id => {
+                let div = document.createElement("div");
+                div.ClassName = "chatItem";
+                div.innerText = id;
+                div.onclick = () => {
+                    currentChatId = id;
+                    loadMessages();
+                };
+                list.appendChild(div);
+            });
+        }
+
+        function loadMessages() {
+            let box = document.getElementById("chatBox");
+            box.innerHTML = "";
+            if (!currentChatId) return;
+
+            chats[currentUser]
+                [currentChatId].forEach(msg => {
+                    addMessage(msg.text, msg.type, false);
                 });
-            });
         }
 
-        emailjs.init("YOUR_PUBLIC_KEY");
+        function addMessage(text, type, save = true) {
+            let div = document.createElement("div");
+            div.className = "message " + type;
+            div.innerText = text;
+            document.getElementById("chatBox").appendChild(div);
 
-        document.getElementById("contactForm").addEventListener("submit", function(e) {
-            e.preventDefault();
+            if (save) {
+                chats[currentUser]
+                    [currentChatId].push({
+                        text: text,
+                        type: type
+                    });
+                localStorage.setItem("allChats", JSON.stringify(chats));
+            }
+        }
 
-            emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", this)
-                .then(() => {
-                    alert("Message Sent Successfully!");
-                }, (error) => {
-                    alert("Failed to send message.");
-                });
-        });
+        function summarizeChat() {
+            let messages = chats[currentUser][currentChatId].map(m => m.text).join(" ");
 
-        function filterProjects(category) {
-            const projects = document.querySelectorAll(".project-card");
+            return "Summary:" + messages.substring(0, 100) + "...";
+        }
 
-            projects.forEach(project => {
-                if (category === "all" || project.dataset.category === category) {
-                    project.style.display = "block";
+        function enterHome() {
+            document.getElementById("loginScreen").style.display = "none";
+            let home = document.getElementById("home");
+            home.style.display = "flex";
+            home.classList.add("fade");
 
-                } else {
-                    project.style.display = "none";
+            loadChatHistory();
+
+            function clearChat() {
+                localStorage.removeItem("chatHistory");
+                chatHistory = [];
+                document.getElementById("chatBox").innerHTML = "";
+            }
+        }
+
+        function upgradePlan() {
+            alert("Payment System integration coming soon!");
+        }
+
+        function payWithPaystack() {
+
+            let handler = PaystackPop.setup({
+                key: 'YOUR_PUBLIC_PAYSTACK_KEY', // replace this
+                email: currentUser + "@gmail.com",
+                amount: 500000, // 5000 naira in kobo
+                currency: "NGN",
+                callback: function(response) {
+                    alert("Payment successful");
+                    localStorage.setItem("isPro_" + currentUser, true);
+                },
+                onclose: function() {
+                    alert('Payment cancalled');
                 }
+
+            });
+
+            handler.openIframe();
+        }
+
+        if (!
+            localStorage.getItem("isPro_" + currentUser)
+        ) {
+            alert("Upgrade to pro to use AI straming. ");
+            return;
+        }
+
+        function sendMessages() {
+            let input = document.getElementById("chatInput");
+            let message = input.value.trim();
+            if (message === "") return;
+
+            addMessage(message, "user");
+
+            setTimeout(() => {
+                callRealAI(message).then(reply => {
+                    addMessage(reply, "bot");
+                });
+            }, 500);
+
+            input.value = "";
+        }
+
+        function sendMessage() {
+            const input =
+                document.getElementById("userInput");
+            const chatBox =
+                document.getElementById("chatBox");
+
+            const userText = input.value;
+            const reply = getResponse(userText);
+
+            chatBox.innerHTML +=
+                `<p><strong>You:</strong> ${userText}</p>`;
+
+            setTimeout(() => {
+                chatBox.innerHTML +=
+                    `<p><strong>AI:</strong> ${reply}</p>`;
+                speak(reply);
+
+            }, 600);
+
+            input.value = "";
+        }
+
+        function speak(text) {
+            const speech = new
+            SpeechSynthesisUtterance(text);
+
+            const voices =
+                window.speechSynthesis.getVoices();
+            speech.voice = voices[1];
+            speech.rate = 0.95;
+            speech.pitch = 1.1;
+
+            window.speechSynthesis.speak(speech);
+        }
+
+        function stopVoice() {
+            window.speechSynthesis.cancel();
+        }
+
+        function addMessage(text, type, save = true) {
+            let div = document.createElement("div");
+            div.className = "message " + type;
+            div.innerText = text;
+            document.getElementById("chatBox").appendChild(div);
+            document.getElementById("chatBox").scrollTop =
+                document.getElementById("chatBox").scrollHeight;
+
+            if (save) {
+                chatHistory.push({
+                    text: text,
+                    type: type
+                });
+                localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+            }
+        }
+
+        document.getElementById("plusBtn").addEventListener("click", function() {
+            alert("Plus button clicked!");
+        });
+
+
+        function loadChatHistory() {
+            chatHistory.forEach(msg => {
+                addMessage(msg.text, msg.type, false);
             });
         }
 
-        function addProject() {
-            const title =
-                document.getElementById("title").value;
-            const desc =
-                document.getElementById("desc").value;
+        function sendMessage() {
+            let input = document.getElementById("chatInput");
+            let message = input.value.trim();
+            if (message === "") return;
 
-            const Project = {
-                title,
-                desc
-            };
+            addMessage(message, "user");
 
-            let Projects =
-                JSON.parse(localStorage.getItem("Projects")) || [];
-            Projects.push(Project);
+            let tying = document.createElement("div");
+            typing.className = "message bot";
+            typing.id = "typing";
+            typing.innerText = "Typing...";
+            document.getElementById("chatBox").appendChild(typing);
 
-            localStorage.setItem("Projects", JSON.stringify(Projects));
-            alert("Project Added!");
+            setTimeout(() => {
+                typing.remove();
+                callRealAI(message).then(reply => {
+                    addMessage(reply, "bot");
+                });
+            }, 1500);
+
+            input.value = "";
         }
 
-        const savedProjects =
-            JSON.parse(localStorage.getItem("Projects")) || [];
+        let featuresDiv = document.getElementById("features");
 
-        savedProjects.forEach(p => {
-            const ProjectCard = `<div class="project-card">
-            <h3>${p.title}</h3>
-            <p>${p.desc}</p>
-            </div>`;
+        for (let i = 1; i <= 50; i++) {
+            let p = document.createElement("P");
+            p.innerText = "Feature " + i;
+            p.style.cursor = "pointer";
+            p.onclick = () => addMessage("Activated Feature" + i, "bot");
+            featuresDiv.appendChild(P);
+        }
 
-            document.getElementById("Projects").innerHTML += ProjectCard;
-        });
+        model: "gpt-4o"
+
+        function toggleFeatures() {
+            featuresDiv.style.display =
+                featuresDiv.style.display === "block" ? "none" : "block";
+        }
+
+        function fakeFingerprint() {
+            document.getElementById("loginMsg").innerText = "Scanning Fingerprint...";
+            setTimeout(() => {
+                enterHome();
+            }, 2000);
+        }
+
+        function fakeFaceID() {
+            document.getElementById("loginMsg").innerText = "Scannind FaceID...";
+            setTimeout(() => {
+                enterHome();
+            }, 2000);
+        }
+
+        async function callRealAIStream(message) {
+            let response = await
+            fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+                },
+                body: JSON.stringify({
+                    model: "gpt-4o-mini",
+                    messages: [{
+                        role: "system",
+                        content: "You are Chat AI."
+                    }, {
+                        role: "user",
+                        content: message
+                    }],
+                    stream: true
+                })
+            });
+
+            const reader =
+                response.body.getReader();
+            const decoder = new
+            TextDecoder("utf-8");
+
+            let botDiv = document.createElement("div");
+            botDiv.className = "message bot";
+            Document.getElementById("chatBox").appendChild(botDiv);
+
+            while (true) {
+                const {
+                    done,
+                    value
+                } = await reader.read();
+                if (done) break;
+
+                let chunk = decoder.decode(value);
+                botDiv.innerText += chunk;
+                document.getElementById("chatBox").scrollTop =
+                    document.getElementById("chatBox").scrollHeight;
+            }
+
+
+            let data = await response.json();
+            let reply = data.choices[0].message.content;
+
+            chatHistory.push({
+                text: reply,
+                type: "bot"
+            });
+            localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+
+            return reply;
+        }
     </script>
 </body>
 
